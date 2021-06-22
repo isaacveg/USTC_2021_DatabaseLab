@@ -1,0 +1,118 @@
+<!doctype html>
+<title>CheckAccounts</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<body onload="addcheck({{addres}});updatecheck({{updres}});delcheck({{delres}});">
+<section class="content">
+  <header>
+    <h1>支票账户管理</h1>
+    <script>
+      function delconf(orid){
+        str="你确定要删除id为"+orid+"的账户信息吗？";
+        conf=window.confirm(str);
+        delstr='yesDel'+orid
+        if(conf) document.getElementById(delstr).click();
+      }
+      function addcheck(res){
+        if(res) alert("添加成功！");
+        else if(res == 0) alert("添加失败，请重新检查您的输入，是否有留空或重复的ID？");
+      }
+      function updatecheck(res){
+        if(res) alert("修改成功！");
+        else if(res == 0) alert("修改失败，请重新检查您的输入。");
+      }
+      function delcheck(res){
+        if(res) alert("删除成功！");
+        else if(res == 0) alert("删除失败，请重试。");
+      }
+    </script>
+  </header>
+  <a href="{{url_for('mainpage')}}">
+    <button>返回首页</button>
+</a>
+  <form method="post" id="operations"> 
+    <div>
+      <input id = "SEARCHTEXT" type="text" name = "SearchText" placeholder="留空显示所有支票账户"> 
+      按：
+      <select name="searchtype">
+        <option value="name">姓名</option>
+        <option value="CheckAccounts_ID">账户ID</option>
+        <option value="Costumer_ID">ID</option>
+        <option value="tel">电话号码</option>
+        <option value="bank_name">银行</option>
+        <option value="ContactName">联系人姓名</option>
+        <option value="ContactTel">联系人电话</option>
+        <option value="ContactEmail">联系人邮箱</option>
+      </select>
+      <input id = "SEARCH" type="submit" autofocus="true" name = "SEARCH" value="搜索账户" >
+      <div id = "addacc" style="display: none;">
+        <p>请填写你要添加的支票账户的详细信息：</p><br>
+        <input id = "ADDID" type="text" pattern="[0-9]{3,}" name = "ADDid" placeholder="ID" >
+        <input id = "ADDSAVINGS" type="text" name = "ADDsavings" placeholder="账户余额">
+        开户日期
+        <input id = "ADDOPENDATE" type="date" min="1990-01-01" name = "ADDopendate">
+        登陆日期
+        <input id = "ADDCHECKINDATE" type="date" min="1990-01-01" onfocus="this.min=document.getElementById('ADDOPENDATE').value" name="ADDcheckindate">
+        <input id = "ADDDRAW" type="text" name = "ADDdrawleft" placeholder="透支额度">
+        <p>请填写关联客户的ID：</p><br>
+        <input id = "ADDID" type="text" pattern="[0-9]{5,}" name = "ADDCosid" placeholder="客户ID">
+        <select name="bankname">
+            <option value="合肥西支行">合肥西支行</option>
+            <option value="合肥东支行">合肥东支行</option>
+            <option value="上海总部">上海总部</option>
+        </select>
+        <input id = "ADD" type="submit" name = "ADD" value="添加帐户">
+      </div>
+    </div>
+  </form>
+  <div><button id="showinput"  class="showinput" onclick="document.getElementById('addacc').style='background-color: aqua; ';this.style='display: none'">添加账户</button>
+  <div><div style="color: red;float: left;">{{searchtext}}</div> 一共找到{{rows|length}}条记录</div>
+  <table>
+    <thead>
+        <tr>
+            <th> 账户ID</th>
+            <th> 余额 </th>
+            <th> 透支额度 </th>
+            <th> 开户日期 </th>
+            <th> 最近登陆 </th>
+            <th> 姓名 </th>
+            <th> 客户ID </th>
+            <th> 银行 </th>
+            <th> 操作 </th>
+        </tr>
+    </thead>
+    <tbody>
+		{% for row in rows %}
+		<tr>
+			<td> {{ row[0]  }}</td>
+			<td> {{ row[1]  }}</td>
+      <td> {{ row[2]  }}</td>
+			<td> {{ row[3]  }}</td>
+      <td> {{ row[4]  }}</td>
+      <td> {{ row[5]  }}</td>
+			<td> {{ row[6]  }}</td>
+      <td> {{ row[7]  }}</td>
+      <td> <button onclick="document.getElementById('{{row[0]}}').style=''">改</button>/<button onclick="delconf({{row[0]}})">删</button> </td>
+    </tr>
+    <tr id = "{{row[0]}}" style="display: none;">
+      <form method="POST" id="ChangeOpr">
+      <input id = "orid" type="input" name="orid" value="{{row[0]}}" style="display: none;">
+      <input id = "orbc" type="input" name="orbc" value="{{row[7]}}" style="display: none;">
+      <input id = "yesDel{{row[0]}}" type = "submit" name = "DEL" style="display:none;" value="已经确认删除">
+	  <td></td>
+	  <td><input id="cgbalance" type="text" name="cgbalance" style="width: 100%;"></td>
+      <td><input id="cgdrawleft" type="text" name="cgdrawleft" style="width: 100%;"></td>
+      <td></td>
+      <td><input id="cgcheckin" type="text" name="cgcheckin" style="width: 100%;"></td>
+      <td></td>
+	  <td></td>
+      <td><input id="addcossa" type="text" name="addcossa" placeholder="增加客户ID" style="width: 100%;"></td>
+      <td><input type="submit" name="CHANGE" value="修改" style="width: 100%;"></td>
+      </form>
+    </tr>
+    </tbody>
+		{% endfor %}
+  </table>
+</section>
+</body>

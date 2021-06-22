@@ -1,0 +1,32 @@
+<!doctype html>
+<title>Home</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<body onload="warning({{loginres}})">
+  <section class="content">
+    <header>
+      <h1 >欢迎使用银行业务管理系统！</h1>
+    </header>
+  
+    <form method="post" id="operations"> 
+      <div>
+        <input id = "costumerBtn" type="submit" name = "costumer" value="客户操作"> 
+        <input id = "normalAccountBtn" type="submit" name = "normalAccount" value="储蓄账户" > 
+        <input id = "checkAccountBtn" type="submit" name = "checkAccount" value="支票账户" > 
+        <input id = "loanAccountBtn" type="submit" name = "loan" value="贷款操作" > 
+        <input id = "propertyBtn" type="submit" name = "property" value="业务统计" > 
+      </div>
+    </form>
+    <p id="ymd"></p>
+    <script>
+        var date = new Date();
+        var y = date.getFullYear();
+        var m = date.getMonth()+1;
+        var d = date.getDate(); 
+        document.getElementById("ymd").innerHTML = "当前时间："+y+"-"+m+"-"+d;
+    </script>
+    <script type="text/javascript"></script>
+    
+  </section>
+</body>

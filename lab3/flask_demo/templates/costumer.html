@@ -1,0 +1,111 @@
+<!doctype html>
+<title>Customer</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<body onload="addcheck({{addres}});updatecheck({{updres}});delcheck({{delres}});">
+<section class="content">
+  <header>
+    <h1>客户操作</h1>
+    <script>
+      function delconf(orid){
+        str="你确定要删除id为"+orid+"的客户信息吗？";
+        conf=window.confirm(str);
+        delstr='yesDel'+orid
+        if(conf) document.getElementById(delstr).click();
+      }
+      function addcheck(res){
+        if(res) alert("添加成功！");
+        else if(res == 0) alert("添加失败，请重新检查您的输入，是否有留空或重复的ID？");
+      }
+      function updatecheck(res){
+        if(res) alert("修改成功！");
+        else if(res == 0) alert("修改失败，请重新检查您的输入。");
+      }
+      function delcheck(res){
+        if(res) alert("删除成功！");
+        else if(res == 0) alert("删除失败，用户可能有账户或贷款存在。请先删除账户或贷款后再删除用户。");
+      }
+    </script>
+  </header>
+  <a href="{{url_for('mainpage')}}">
+    <button>返回首页</button>
+</a>
+  <form method="post" id="operations"> 
+    <div>
+      搜索关键词：
+      <input id = "SEARCHTEXT" type="text" name = "SearchText" style="width: 10em;" placeholder="留空显示所有客户" > 
+      按：
+      <select name="searchtype">
+        <option value="name">姓名</option>
+        <option value="ID">ID</option>
+        <option value="tel">电话号码</option>
+        <option value="ContactName">联系人姓名</option>
+        <option value="ContactTel">联系人电话</option>
+        <option value="ContactEmail">联系人邮箱</option>
+      </select>
+      <input id = "SEARCH" type="submit" name = "SEARCH" autofocus="true" value="搜索客户" >
+      <div id = "addcos" style="display: none;">
+        <p>请填写你要添加的客户的详细信息：</p><br>
+        <input id = "ADDID" type="text" pattern="[0-9]{5,}" maxlength="5" name = "ADDid" placeholder="5位ID" >
+        <input id = "ADDNAME" type="text" name = "ADDname" placeholder="姓名" >
+        <input id = "ADDTEL" type="text" pattern="[0-9]{6,}" name = "ADDtel" placeholder="电话">
+        <input id = "ADDCNAME" type="text" name = "ADDcname" placeholder="联系人姓名">
+        <input id = "ADDCTEL" type="text" name = "ADDctel" placeholder="联系人电话">
+        <input id = "ADDCMAIL" type="email" name = "ADDcmail" placeholder="联系人邮箱">
+        <input id = "ADDREL" type="text" name = "ADDrel" placeholder="关系">
+        <input id = "ADDADDR" type="text" name = "ADDaddr" placeholder="家庭住址">
+        <input id = "ADD" type="submit" name = "ADD" value="添加客户">
+
+      </div>
+    </div>
+  </form>
+  <div><button id="showinput" class="showinput"  onclick="document.getElementById('addcos').style='background-color: aqua; ';this.style='display: none'">添加客户</button>
+  <div><div style="color: red;float: left;">{{searchtext}}</div> 一共找到{{rows|length}}条记录</div>
+  <table>
+    <thead>
+        <tr>
+            <th> ID</th>
+            <th> 姓名 </th>
+            <th> 电话</th>
+            <th> 联系人</th>
+            <th> 联系人电话</th>
+            <th> 联系人邮箱</th>
+            <th> 联系人关系</th>
+            <th> 家庭住址 </th>
+            <th> 操作 </th>
+        </tr>
+    </thead>
+    <tbody>
+		{% for row in rows %}
+		<tr>
+			<td> {{ row[0]  }}</td>
+			<td> {{ row[1]  }}</td>
+            <td> {{ row[2]  }}</td>
+			<td> {{ row[3]  }}</td>
+            <td> {{ row[4]  }}</td>
+            <td> {{ row[5]  }}</td>
+			<td> {{ row[6]  }}</td>
+      <td> {{ row[7]  }}</td>
+            <td> <button onclick="document.getElementById('{{row[0]}}').style=''">改</button>/<button onclick="delconf({{row[0]}})">删</button> </td>
+    </tr>
+    <tr id = "{{row[0]}}" style="display: none;">
+      <form method="POST" id="ChangeOpr">
+      <input id = "orid" type=input name="orid" value="{{row[0]}}" style="display: none;">
+      <input id = "yesDel{{row[0]}}" type = "submit" name = "DEL" style="display:none;" value="已经确认删除">
+			<td> <input id="cgid" type="text" name="cgid"> </td>
+			<td> <input id="cgname" type="text" name="cgname"></td>
+      <td> <input id="cgtel" type="text" name="cgtel"></td>
+			<td> <input id="cgcname" type="text" name="cgcname"></td>
+      <td> <input id="cgctel" type="text" name="cgctel"></td>
+      <td> <input id="cgcmail" type="email" name="cgcmail"></td>
+			<td> <input id="cgcrel" type="text" name="cgcrel"></td>
+      <td> <input id="cgaddr" type="text" name="cgaddr"></td>
+      <td> <input type="submit" name="CHANGE" value="修改"> </td>
+      </form>
+    </tr>
+    </tbody>
+		{% endfor %}
+  </table>
+</section>
+</body>

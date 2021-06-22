@@ -1,0 +1,36 @@
+<!doctype html>
+<title>Database Login</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<body onload="warning({{loginres}})">
+  <section class="content">
+    <header>
+      <h1>银行管理系统登陆</h1>
+      <script>
+        function warning(loginres){
+          if (loginres == 0) 
+            alert("登陆失败！请重试");
+        }
+      </script>
+    </header>
+  
+    <form method="post">
+      <label for="ipaddr">服务器地址</label>
+          <input type="ipaddr" name="ipaddr" id="ipaddr" required>
+      
+      <label for="database">数据库名</label>
+          <input type="database" name="database" id="database" required>
+      
+      <label for="username">账号</label>
+          <input name="username" id="username" required>
+  
+      <label for="password">密码</label>
+          <input type="password" name="password" id="password" required>
+  
+      <input type="submit" value="Log In">
+  
+    </form>
+    
+  </section>
+</body>

@@ -1,0 +1,115 @@
+<!doctype html>
+<title>LoanDetail for {{loanid}}</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<body onload="addcheck({{addres}});updatecheck({{updres}});">
+<section class="content">
+  <header>
+    <h1 style="font-size: 40px; text-align: left;">贷款{{loanid}}的详细信息</h1>
+    <script>
+      function addcheck(res){
+        if(res) alert("添加成功！");
+        else if(res == 0) alert("添加失败，请重新检查您的输入，是否有留空或重复的ID？");
+      }
+      function updatecheck(res){
+        if(res) alert("添加持有者成功！");
+        else if(res == 0) alert("添加失败，请重新检查您的输入，是否存在该用户？");
+      }
+      function checkinput(){
+            addval=document.getElementById('ADDAMOUNT').value;
+            leftover=parseFloat(document.getElementById('leftover').innerText);
+            if(addval <= 0) alert("不能发放这样的额度！");
+            else if (addval > leftover){
+                alert("发放额度大于剩余额度！");
+            }
+            else document.getElementById('yesADD').click();
+      }
+    </script>
+  </header>
+  <a href="{{url_for('loansServ')}}">
+    <button autofocus="true">返回贷款查询</button>
+  </a>
+  <a href="{{url_for('mainpage')}}">
+    <button>返回首页</button>
+  </a>
+  <div class="loaninfo" style="border-style: groove;border-top: none;">
+    <table>
+        <thead>
+            <tr>
+                <th>总额</th>
+                <th>贷款人</th>
+                <th>贷款人ID</th>
+                <th>银行</th>
+                <th>已发放</th>
+                <th>未发放</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for tab in tabs%}
+            <tr>
+                <td>{{tab[1]}}</td>
+                <td>{{tab[2]}}</td>
+                <td>{{tab[3]}}</td>
+                <td>{{tab[4]}}</td>
+                <td>{{tab[6]}}</td>
+                {% if tab[6]!=None %}
+                    <td id="leftover">{{tab[1]-tab[6]}}</td>
+                {% else %}
+                    <td id="leftover">{{tab[1]}}</td>
+                {%endif%}
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+  </div>
+  <div id = "addloan" style="display: none;">
+  <form method="post" id="operations"> 
+        <p>请填写放款详细信息：</p><br>
+        序列号（自动生成）
+        <input id = "ADDID" type="text" name = "ADDid" value="{{rows|length + 1}}">
+        <input id = "ADDAMOUNT" type="text" name = "ADDamount" placeholder="发放额" >
+        发放日期
+        <input id = "ADDDATE" type="date" name = "ADDdate" >
+        <input id = "yesADD" type="submit" style="display: none;" value="确认" name="ADD">
+    </form>
+    <button onclick="checkinput()">添加</button>
+</div>
+<div id = "addcos" style="display: none;">
+  <form method="post" id="operations"> 
+        <p>请填写要增加的持有人ID：</p><br>
+        <input id = "ADDcosID" type="text" name = "ADDcosid" >
+        <input id = "idadd" type="submit" value="确认" style="max-width: 10em;" name="ADDid">
+    </form>
+</div>
+  {% if tabs[0][6]==None or tabs[0][1]-tabs[0][6] != 0%}
+    <div><button id="showinput" class="showinput" onclick="document.getElementById('addloan').style='background-color: aqua; ';this.style='display: none'">发放款项</button></div>
+    <div><button id="showadd" class="showinput" onclick="document.getElementById('addcos').style='background-color: aqua; ';this.style='display: none'">增加持有人</button></div>
+  {%endif%}
+  <div><div style="color: red;float: left;">{{searchtext}}</div> 一共找到{{rows|length}}条发放记录</div>
+  <table>
+    <thead>
+        <tr>
+            <th> 序列号 </th>
+            <th> 放款量 </th>
+            <th> 放款日期 </th>
+            <th> 剩余量</th>
+        </tr>
+    </thead>
+    <tbody>
+		{% for row in rows %}
+		<tr>
+			<td> {{ row[0]  }}</td>
+			<td> {{ row[1]  }}</td>
+            <td> {{ row[2]  }}</td>
+            {% set total=namespace(value=tabs[0][1])%}
+            {% for i in range(loop.index)%}
+                {% set total.value=total.value-rows[i][1] %}
+            {%endfor%}
+            <td>{{total.value}}</td>
+        </tr>
+		{% endfor %}
+    </tbody>
+  </table>
+</section>
+</body>
